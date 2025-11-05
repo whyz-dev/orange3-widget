@@ -1,0 +1,21 @@
+Metadata-Version: 2.2
+Name: orange3-example
+Version: 0.1.1
+Summary: Orange3 LLM 기반 사용자 정의 예제 위젯입니다.
+Home-page: https://github.com/whyz-dev/Orange3-Widget
+Author: Gangjun Jo
+License: MIT
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Requires-Dist: Orange3>=3.32.0
+Requires-Dist: openai
+Requires-Dist: PyQt5
+Requires-Dist: python-dotenv
+Requires-Dist: opencv-python
+Requires-Dist: pyserial
+Dynamic: author
+Dynamic: classifier
+Dynamic: home-page
+Dynamic: license
+Dynamic: requires-dist
+Dynamic: summary

@@ -1,0 +1,9 @@
+MANIFEST.in
+setup.py
+orange3_example.egg-info/PKG-INFO
+orange3_example.egg-info/SOURCES.txt
+orange3_example.egg-info/dependency_links.txt
+orange3_example.egg-info/entry_points.txt
+orange3_example.egg-info/not-zip-safe
+orange3_example.egg-info/requires.txt
+orange3_example.egg-info/top_level.txt

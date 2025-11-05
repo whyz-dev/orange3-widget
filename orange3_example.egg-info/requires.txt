@@ -1,0 +1,6 @@
+Orange3>=3.32.0
+openai
+PyQt5
+python-dotenv
+opencv-python
+pyserial
