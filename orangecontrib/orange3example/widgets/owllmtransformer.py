@@ -3,7 +3,7 @@ from Orange.widgets.widget import OWWidget, Input, Output
 from Orange.widgets import gui
 from Orange.widgets.settings import Setting
 import Orange.data
-from PyQt5.QtWidgets import QTextEdit, QLineEdit, QLabel  # QTextEdit 사용
+from AnyQt.QtWidgets import QTextEdit, QLineEdit, QLabel  # QTextEdit 사용
 from orangecontrib.orange3example.utils.llm import LLM  # llm.py에서 LLM 클래스를 가져옴
 
 class OWLLMTransformer(OWWidget):

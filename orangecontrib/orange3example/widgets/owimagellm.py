@@ -3,9 +3,9 @@ from Orange.widgets.widget import OWWidget, Input, Output
 from Orange.widgets import gui
 from Orange.widgets.settings import Setting
 import Orange.data
-from PyQt5.QtWidgets import QTextEdit, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit
-from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtCore import Qt
+from AnyQt.QtWidgets import QTextEdit, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit
+from AnyQt.QtGui import QPixmap, QImage
+from AnyQt.QtCore import Qt
 import numpy as np
 import base64
 import io

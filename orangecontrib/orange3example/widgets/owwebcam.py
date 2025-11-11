@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from Orange.widgets.widget import OWWidget
 from Orange.widgets import gui
-from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout
-from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtCore import QTimer
+from AnyQt.QtWidgets import QLabel, QPushButton, QVBoxLayout
+from AnyQt.QtGui import QPixmap, QImage
+from AnyQt.QtCore import QTimer
+import sys
+import subprocess
+import threading
 import numpy as np
-import cv2
 
 try:
     from orangecontrib.orange3example.utils import webcam
@@ -91,6 +93,11 @@ class OWWebcam(OWWidget):
             return
         
         # BGR -> RGB 변환 후 출력으로 전송
+        try:
+            import cv2  # 지연 임포트: opencv가 없는 환경에서도 위젯은 로드되도록
+        except Exception:
+            self.image_label.setText("OpenCV가 설치되어 있지 않아 캡쳐를 전송할 수 없습니다.\n'pip install orange3-example[webcam]'로 설치하세요.")
+            return
         frame_rgb = cv2.cvtColor(self.current_frame, cv2.COLOR_BGR2RGB)
         self.send("Image", frame_rgb)
 

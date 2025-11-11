@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="orange3-example",  # PyPI 등록 이름
-    version="0.1.4",
+    version="0.1.10",
     description="Orange3 LLM 기반 사용자 정의 예제 위젯입니다.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -19,10 +19,9 @@ setup(
     install_requires=[
         "Orange3>=3.32.0",
         "openai",
-        "PyQt5",
         "python-dotenv",
-        "opencv-python",
-        "pyserial"
+        "pyserial",
+        "opencv-python-headless==4.9.0.80",
     ],
     entry_points={
         "orange3.addon": (

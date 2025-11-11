@@ -3,7 +3,7 @@ from Orange.widgets.widget import OWWidget, Input
 import Orange.data
 from Orange.data import StringVariable
 
-from PyQt5.QtWidgets import QTextEdit, QPushButton, QComboBox, QLabel, QHBoxLayout, QWidget, QVBoxLayout, QCheckBox
+from AnyQt.QtWidgets import QTextEdit, QPushButton, QComboBox, QLabel, QHBoxLayout, QWidget, QVBoxLayout, QCheckBox
 from orangecontrib.orange3example.utils import microbit
 
 
