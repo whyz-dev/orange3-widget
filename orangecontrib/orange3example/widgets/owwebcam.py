@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Orange.widgets.widget import OWWidget
 from Orange.widgets import gui
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout

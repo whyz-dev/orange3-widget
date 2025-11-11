@@ -1,5 +1,0 @@
-[orange.widgets]
-Example Widgets = orangecontrib.orange3example.widgets
-
-[orange3.addon]
-orange3example = orangecontrib.orange3example

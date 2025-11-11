@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Orange.widgets.widget import OWWidget, Input, Output
 from Orange.widgets import gui
 from Orange.widgets.settings import Setting

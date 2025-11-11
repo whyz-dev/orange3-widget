@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Orange.widgets.widget import OWWidget, Input
 import Orange.data
 from Orange.data import StringVariable

@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
 setup(
     name="orange3-example",  # PyPI 등록 이름
-    version="0.1.2",
+    version="0.1.3",
     description="Orange3 LLM 기반 사용자 정의 예제 위젯입니다.",
     author="Gangjun Jo",
     url="https://github.com/whyz-dev/Orange3-Widget",

@@ -1,7 +1,20 @@
+# -*- coding: utf-8 -*-
 import serial
 import time
 import serial.tools.list_ports
 import threading
+import sys
+import io
+
+# Windows에서 콘솔 출력 인코딩 문제 해결
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except AttributeError:
+        # Python 3.6 이하 버전에서는 reconfigure가 없음
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 _connection = None
 _text_input_callback = None
