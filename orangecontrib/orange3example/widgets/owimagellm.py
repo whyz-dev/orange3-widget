@@ -1,7 +1,8 @@
 from Orange.widgets.widget import OWWidget, Input, Output
 from Orange.widgets import gui
+from Orange.widgets.settings import Setting
 import Orange.data
-from PyQt5.QtWidgets import QTextEdit, QLabel, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QTextEdit, QLabel, QVBoxLayout, QHBoxLayout, QLineEdit
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 import numpy as np
@@ -15,9 +16,10 @@ class OWImageLLM(OWWidget):
     description = "마이크로비트 이미지와 텍스트를 입력받아 멀티모달 LLM으로 처리하는 Orange3 위젯"
     icon = "../icons/machine-learning-03-svgrepo-com.svg"
     priority = 20
+    api_key = Setting("")
 
     class Inputs:
-        image_data = Input("이미지 데이터", np.ndarray)
+        image_data = Input("이미지 데이터", np.ndarray, auto_summary=False)
         text_data = Input("텍스트 데이터", Orange.data.Table)
 
     class Outputs:
@@ -32,6 +34,12 @@ class OWImageLLM(OWWidget):
         self.image_label.setMinimumSize(200, 150)
         self.image_label.setStyleSheet("border: 2px dashed #ccc;")
         
+        # API Key 입력 필드
+        self.api_key_input = QLineEdit(self.controlArea)
+        self.api_key_input.setPlaceholderText("OpenAI API Key")
+        self.api_key_input.setEchoMode(QLineEdit.Password)
+        self.api_key_input.setText(self.api_key)
+
         # 프롬프트 입력 필드
         self.prompt = "이 이미지와 텍스트를 분석해주세요."
         self.prompt_input = QTextEdit(self.controlArea)
@@ -54,6 +62,8 @@ class OWImageLLM(OWWidget):
         control_layout = QVBoxLayout()
         control_layout.addWidget(QLabel("입력 이미지:"))
         control_layout.addWidget(self.image_label)
+        control_layout.addWidget(QLabel("API Key"))
+        control_layout.addWidget(self.api_key_input)
         control_layout.addWidget(QLabel("프롬프트:"))
         control_layout.addWidget(self.prompt_input)
         control_layout.addWidget(self.process_button)
@@ -141,9 +151,12 @@ class OWImageLLM(OWWidget):
         """멀티모달 LLM 처리 실행"""
         try:
             self.prompt = self.prompt_input.toPlainText()
+            api_key_value = (self.api_key_input.text() or "").strip() or None
+            # Setting 저장
+            self.api_key = self.api_key_input.text()
             
             # LLM 인스턴스 생성
-            llm = LLM()
+            llm = LLM(api_key=api_key_value)
             
             # 멀티모달 데이터 준비
             multimodal_data = self.prepare_multimodal_data()
@@ -151,9 +164,9 @@ class OWImageLLM(OWWidget):
             # LLM API 호출
             results = llm.get_multimodal_response(self.prompt, multimodal_data)
             
-            # 결과를 Orange 데이터 테이블로 변환
+            # 결과를 Orange 데이터 테이블로 변환 (메타에 저장)
             domain = Orange.data.Domain([], metas=[Orange.data.StringVariable("LLM Response")])
-            response_data = Orange.data.Table(domain, [[str(result)] for result in results])
+            response_data = Orange.data.Table.from_list(domain, [[str(result)] for result in results])
             
             # 출력 전송
             self.Outputs.llm_response.send(response_data)
@@ -167,7 +180,7 @@ class OWImageLLM(OWWidget):
             
             # 오류 결과도 출력으로 전송
             domain = Orange.data.Domain([], metas=[Orange.data.StringVariable("Error")])
-            error_data = Orange.data.Table(domain, [[error_msg]])
+            error_data = Orange.data.Table.from_list(domain, [[error_msg]])
             self.Outputs.llm_response.send(error_data)
 
     def prepare_multimodal_data(self):

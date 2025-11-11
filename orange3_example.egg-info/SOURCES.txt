@@ -7,3 +7,13 @@ orange3_example.egg-info/entry_points.txt
 orange3_example.egg-info/not-zip-safe
 orange3_example.egg-info/requires.txt
 orange3_example.egg-info/top_level.txt
+orangecontrib/__init__.py
+orangecontrib/orange3example/__init__.py
+orangecontrib/orange3example/utils/llm.py
+orangecontrib/orange3example/utils/microbit.py
+orangecontrib/orange3example/utils/webcam.py
+orangecontrib/orange3example/widgets/__init__.py
+orangecontrib/orange3example/widgets/owimagellm.py
+orangecontrib/orange3example/widgets/owllmtransformer.py
+orangecontrib/orange3example/widgets/owmicrobit.py
+orangecontrib/orange3example/widgets/owwebcam.py

@@ -45,7 +45,8 @@ def send_and_receive(message: str, wait_time: float = 2.0) -> str:
         raise RuntimeError("Microbit 연결이 되어 있지 않습니다. connect(port)를 먼저 호출하세요.")
 
     _connection.reset_input_buffer()  # 🧹 이전 수신 버퍼 정리
-    _connection.write((message + '\n').encode('utf-8'))
+    # CRLF로 전송 (마이크로비트/펌웨어에서 CRLF를 기대하는 경우 대응)
+    _connection.write((message + '\r\n').encode('utf-8'))
 
     time.sleep(wait_time)
 
@@ -67,10 +68,12 @@ def send_text(text: str) -> bool:
         return False
     
     try:
-        # 텍스트에 개행 문자 추가하여 전송
-        message = text.strip() + '\n'
+        # 이전 수신 버퍼를 비우고, CRLF로 전송
+        _connection.reset_input_buffer()
+        message = text.strip() + '\r\n'
         _connection.write(message.encode('utf-8'))
         _connection.flush()  # 버퍼 즉시 전송
+        time.sleep(0.05)  # 전송 안정화 짧은 대기
         print(f"전송됨: {text}")
         return True
     except Exception as e:
@@ -93,9 +96,42 @@ def start_text_listening(callback=None):
         while _is_listening and _connection and _connection.is_open:
             try:
                 if _connection.in_waiting > 0:
-                    response = _connection.readline().decode('utf-8', errors='ignore').strip()
-                    if response and _text_input_callback:
-                        _text_input_callback(response)
+                    # 완전한 응답을 받기 위해 타임아웃을 두고 모든 데이터 읽기
+                    response_parts = []
+                    no_data_count = 0
+                    max_no_data = 20  # 0.05초 * 20 = 1초 동안 추가 데이터 없으면 완료로 간주
+                    start_time = time.time()
+                    max_wait_time = 2.0  # 최대 2초 대기
+                    
+                    while True:
+                        current_time = time.time()
+                        if current_time - start_time > max_wait_time:
+                            break  # 최대 대기 시간 초과
+                        
+                        if _connection.in_waiting > 0:
+                            # 사용 가능한 모든 바이트 읽기
+                            available_bytes = _connection.in_waiting
+                            data = _connection.read(available_bytes).decode('utf-8', errors='ignore')
+                            if data:
+                                response_parts.append(data)
+                                no_data_count = 0  # 데이터가 있으면 카운터 리셋
+                                start_time = current_time  # 데이터가 오면 시간 리셋
+                        else:
+                            no_data_count += 1
+                            if no_data_count >= max_no_data:
+                                break  # 추가 데이터 없음, 응답 완료
+                        
+                        time.sleep(0.05)  # 짧은 대기
+                    
+                    if response_parts:
+                        # 모든 데이터를 합쳐서 하나의 응답으로 처리
+                        full_response = "".join(response_parts).strip()
+                        # 개행 문자 제거 및 정리
+                        full_response = full_response.replace('\r', '').replace('\n', ' ')
+                        # 여러 공백을 하나로 합치기
+                        full_response = ' '.join(full_response.split())
+                        if full_response and _text_input_callback:
+                            _text_input_callback(full_response)
                 time.sleep(0.1)  # CPU 사용량 줄이기
             except Exception as e:
                 print(f"리스닝 오류: {str(e)}")

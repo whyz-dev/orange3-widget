@@ -1,13 +1,15 @@
 import os
+from typing import Optional
 from openai import OpenAI
 from dotenv import load_dotenv
 
 class LLM:
     """GPT API를 호출하는 클래스"""
-    def __init__(self):
+    def __init__(self, api_key: Optional[str] = None):
+        # 우선순위: 위젯 입력 키 > .env > 환경변수
         load_dotenv()
-        api_key = os.getenv("OPENAI_API_KEY")
-        self.openai_client = OpenAI(api_key=api_key)
+        effective_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.openai_client = OpenAI(api_key=effective_key)
 
     def get_response(self, prompt, data_list):
         """GPT의 응답을 받아서 그대로 반환"""

@@ -1,6 +1,6 @@
-Metadata-Version: 2.2
+Metadata-Version: 2.4
 Name: orange3-example
-Version: 0.1.1
+Version: 0.1.2
 Summary: Orange3 LLM 기반 사용자 정의 예제 위젯입니다.
 Home-page: https://github.com/whyz-dev/Orange3-Widget
 Author: Gangjun Jo
