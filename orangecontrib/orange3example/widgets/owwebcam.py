@@ -16,22 +16,21 @@ except ImportError:
 
 class OWWebcam(OWWidget):
     name = "Webcam Viewer"
-    description = "웹캠을 실시간으로 표시하고 캡쳐 버튼을 눌러 이미지를 전송하는 위젯"
+    description = "Display webcam in real-time and capture images"
     icon = "../icons/machine-learning-03-svgrepo-com.svg"
     priority = 30
 
-    # Output signal 정의
     outputs = [("Image", np.ndarray)]
 
     def __init__(self):
         super().__init__()
 
-        self.image_label = QLabel("웹캠이 시작되지 않았습니다.")
+        self.image_label = QLabel("Webcam not started.")
         self.controlArea.layout().addWidget(self.image_label)
 
-        self.start_button = QPushButton("웹캠 시작")
-        self.stop_button = QPushButton("중지")
-        self.capture_button = QPushButton("이미지 캡쳐")
+        self.start_button = QPushButton("Start Webcam")
+        self.stop_button = QPushButton("Stop Webcam")
+        self.capture_button = QPushButton("Capture Image")
         self.capture_button.setEnabled(False)
 
         self.controlArea.layout().addWidget(self.start_button)
@@ -45,14 +44,13 @@ class OWWebcam(OWWidget):
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_frame)
         
-        # 웹캠 상태 추적
         self.webcam_active = False
-        self.current_frame = None  # 현재 프레임 저장
+        self.current_frame = None
 
     def start_webcam(self):
         if webcam:
             webcam.start_camera()
-            self.timer.start(30)  # 약 30 FPS
+            self.timer.start(30)
             self.webcam_active = True
             self.capture_button.setEnabled(True)
             self.start_button.setEnabled(False)
@@ -65,38 +63,33 @@ class OWWebcam(OWWidget):
         self.capture_button.setEnabled(False)
         self.start_button.setEnabled(True)
         self.current_frame = None
-        self.image_label.setText("웹캠이 중지되었습니다.")
-        # 웹캠 중지 시 output 클리어
+        self.image_label.setText("Webcam stopped.")
         self.send("Image", None)
 
     def update_frame(self):
-        """웹캠 프레임을 읽어서 화면에만 표시 (출력은 보내지 않음)"""
+        """Read webcam frame and display only (don't send output)"""
         if not webcam or not self.webcam_active:
             return
         frame = webcam.read_frame()
         if frame is None:
             return
         
-        # 현재 프레임을 저장 (캡쳐용)
         self.current_frame = frame.copy()
             
-        # 화면에 표시만 (BGR 형식 그대로 사용)
         frame_qimage = cvt_frame_to_qimage(frame)
         pixmap = QPixmap.fromImage(frame_qimage)
         self.image_label.setPixmap(pixmap)
         
-        # 출력은 보내지 않음 (캡쳐 버튼을 눌렀을 때만 보냄)
 
     def capture_image(self):
-        """현재 프레임을 캡쳐해서 출력으로 전송"""
+        """Capture current frame and send as output"""
         if self.current_frame is None:
             return
         
-        # BGR -> RGB 변환 후 출력으로 전송
         try:
-            import cv2  # 지연 임포트: opencv가 없는 환경에서도 위젯은 로드되도록
+            import cv2
         except Exception:
-            self.image_label.setText("OpenCV가 설치되어 있지 않아 캡쳐를 전송할 수 없습니다.\n'pip install orange3-example[webcam]'로 설치하세요.")
+            self.image_label.setText("OpenCV not installed. Cannot capture.\nInstall with 'pip install orange3-example[webcam]'.")
             return
         frame_rgb = cv2.cvtColor(self.current_frame, cv2.COLOR_BGR2RGB)
         self.send("Image", frame_rgb)
@@ -105,6 +98,5 @@ class OWWebcam(OWWidget):
 def cvt_frame_to_qimage(frame):
     h, w, ch = frame.shape
     bytes_per_line = ch * w
-    # OpenCV는 BGR 형식이므로 BGR888 사용
     image = QImage(frame.data, w, h, bytes_per_line, QImage.Format_BGR888)
     return image
